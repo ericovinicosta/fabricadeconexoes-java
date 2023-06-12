@@ -11,7 +11,7 @@ import java.util.Properties;
 
 public class FabricaConexao {
     
-    static public Connection estabeleConexao() throws IOException, SQLException{
+    static public Connection criarConexao() throws IOException, SQLException{
         Properties propriedade = new Properties();
         
         InputStream entrada = FabricaConexao.class.getClassLoader().getResourceAsStream("application.properties");

@@ -5,7 +5,9 @@
  */
 package br.com.ericocosta.conexao.Impl;
 
+import br.com.ericocosta.Conexao.FabricaConexao;
 import br.com.ericocosta.conexao.Repositorio.Crud_Repositorio;
+import br.com.ericocosta.dados_banco.Dado;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -20,58 +22,58 @@ import java.util.List;
  *
  * @author erico
  */
-public class BancoJdbc implements Crud_Repositorio<DadoBanco> {
+public class BancoJdbc implements Crud_Repositorio<Dado> {
 
     @Override
-    public void Incluir(Contato Componente) throws SQLException, IOException {
+    public void Incluir(Dado Componente) throws SQLException, IOException {
 
         try (Connection conexaoBanco = FabricaConexao.criarConexao()) {
-            PreparedStatement comando = conexaoBanco.prepareStatement("INSERT INTO contatos (nome, idade, telefone) VALUES (?, ?, ?)");
-            comando.setString(1, Componente.getNome());
-            comando.setInt(2, Componente.getIdade());
-            comando.setString(3, Componente.getTelefone());
+            PreparedStatement comando = conexaoBanco.prepareStatement("INSERT INTO teste (descricao) VALUES (?)");
+            comando.setString(1, Componente.getMensagem());
+//            comando.setInt(2, Componente.getIdade());
+//            comando.setString(3, Componente.getTelefone());
             comando.execute();
         }
     }
 
     @Override
-    public void Alterar(Contato Componente) throws SQLException, IOException {
+    public void Alterar(Dado Componente) throws SQLException, IOException {
         try(Connection conexaoBanco = FabricaConexao.criarConexao()){
-            PreparedStatement comando = conexaoBanco.prepareStatement("UPDATE contatos AS a SET a.nome = ?, a.idade = ?, a.telefone = ? WHERE a.id = ?");
-            comando.setString(1, Componente.getNome());
-            comando.setInt(2, Componente.getIdade());
-            comando.setString(3, Componente.getTelefone());
-            comando.setInt(4, Componente.getId());
+            PreparedStatement comando = conexaoBanco.prepareStatement("UPDATE teste AS a SET a.descricao = ? WHERE a.id = ?");
+            comando.setString(1, Componente.getMensagem());
+//            comando.setInt(2, Componente.getIdade());
+//            comando.setString(3, Componente.getTelefone());
+            comando.setInt(2, Componente.getId());
             comando.execute();
         }
     }
 
     @Override
-    public void Excluir(Contato Componente) throws SQLException, IOException {
+    public void Excluir(Dado Componente) throws SQLException, IOException {
         try (Connection conexaoBanco = FabricaConexao.criarConexao()) {
-            PreparedStatement comando = conexaoBanco.prepareStatement("DELETE FROM contatos WHERE contatos.id = ?");
+            PreparedStatement comando = conexaoBanco.prepareStatement("DELETE FROM teste AS a WHERE a.id = ?");
             comando.setInt(1, Componente.getId());
             comando.execute();
         }
     }
 
     @Override
-    public List<Contato> Selecionar() throws SQLException, IOException {
+    public List<Dado> Selecionar() throws SQLException, IOException {
 
         /*Connection conexaoBanco = null;*/
-        List<Contato> listaContatos = new ArrayList<>();
+        List<Dado> listaDados = new ArrayList<>();
 
         try (Connection conexaoBanco = FabricaConexao.criarConexao()) {
             /*conexaoBanco = FabricaConexao.criarConexao();*/
             Statement solicitaSQL = conexaoBanco.createStatement();
-            ResultSet respostaSQL = solicitaSQL.executeQuery("SELECT * FROM contatos");
+            ResultSet respostaSQL = solicitaSQL.executeQuery("SELECT * FROM teste"); //verificar tabela
             while (respostaSQL.next()) {
-                Contato contato = new Contato();
-                contato.setId(respostaSQL.getInt("id"));
-                contato.setNome(respostaSQL.getString("nome"));
-                contato.setIdade(respostaSQL.getInt("idade"));
-                contato.setTelefone(respostaSQL.getString("telefone"));
-                listaContatos.add(contato);
+                Dado dado = new Dado();
+                dado.setId(respostaSQL.getInt("id"));
+                dado.setMensagem(respostaSQL.getString("descricao"));
+//                dado.setIdade(respostaSQL.getInt("idade"));
+//                dado.setTelefone(respostaSQL.getString("telefone"));
+                listaDados.add(dado);
             }
         }
         /*finally {
@@ -79,7 +81,7 @@ public class BancoJdbc implements Crud_Repositorio<DadoBanco> {
         conexaoBanco.close();
         }*/
 
-        return listaContatos;
+        return listaDados;
     }
 
 }
